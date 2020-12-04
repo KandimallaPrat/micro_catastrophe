@@ -149,12 +149,12 @@ def plot_model_data(data, beta1_mle, beta2_mle):
         )
     
     # Changing the x-axis label 
-    model__data.xaxis.axis_label = "Time to Catastrophe (s)"
+    model_v_data.xaxis.axis_label = "Time to Catastrophe (s)"
     
     # Determining the maximum value in the data
     data_max_real = np.max(data)
     # Rounding to nearest 100
-    data_max = math.ceil(data_max_real, - 2)
+    data_max = math.ceil(data_max_real)
     
     # Timeline for creating the model CDF
     t = np.linspace(0, data_max + 100, data_max + 100)

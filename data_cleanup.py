@@ -62,7 +62,7 @@ def column_names(df):
         conc_unit = col_name.split(" ")[1]
         
         # Make a dictionary 
-        new_pair = {col_name : conc_value, conc_unit}
+        new_pair = {(col_name) : (conc_value, conc_unit) }
         
         # Adding this to the main dictionary 
         col_dict.update(new_pair)
@@ -71,7 +71,7 @@ def column_names(df):
     
 
 # The data output of the Gardner et al., measurements is not tidy.
-def data_cleanup(data_path, filetype = "csv", save_path):
+def data_cleanup(data_path, save_name, filetype = "csv"):
     """
     Function to create a tidy DataFrame from the input csv/excel file and
     and save it as an excel file for future use.
@@ -86,12 +86,12 @@ def data_cleanup(data_path, filetype = "csv", save_path):
         Default : csv
         Alternative : xlsx
         
-    save_path : STRING 
-        Path to save the tidy dataframe as excel.
+    save_name : STRING 
+        Name to save the tidy dataframe as excel.
 
     Returns
     -------
-    tidy_df : Pandas DataFrame
+    df_tidy : Pandas DataFrame
         Tidy DataFrame containing the data from the experiments
 
     """
@@ -129,9 +129,36 @@ def data_cleanup(data_path, filetype = "csv", save_path):
     # Removing the redundant units column and NaN
     df_tidy = df_tidy.drop("Units", axis = 1)
     df_tidy = df_tidy.dropna()
+    df_tidy = df_tidy.reset_index()
+    df_tidy = df_tidy.drop("index", axis = 1)
     
     # Save DataFrame to Excel 
-    df_tidy.to_excel(save_path + ".xlsx",
-               index = False)
+    df_tidy.to_excel(save_name + ".xlsx", index = False)
     
     return df_tidy
+
+
+# Since we have previously saved the Tidy DataFrame, we might just want to read
+# this in the future
+
+def tidy_reader(data_path):
+    """
+    Function to read the tidy DataFrame
+
+    Parameters
+    ----------
+    data_path : STRING
+        Path to the tidy xlsx file
+        
+    Returns
+    -------
+    df_tidy : Pandas DataFrame
+        Tidy DataFrame containing the data from the experiments
+    """
+    
+    df_tidy = pd.read_xlsx(data_path)
+    
+    return df_tidy
+    
+    
+    

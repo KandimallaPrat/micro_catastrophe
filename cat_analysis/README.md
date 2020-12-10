@@ -1,6 +1,8 @@
 # micro_catastrophe
-Navigate to cat_analysis folder. 
-To install please use:
-`
+To install, navigate to cat_analysis folder and use 
+
+```
+cd cat_analysis 
+
 pip install -e .
-`
+```

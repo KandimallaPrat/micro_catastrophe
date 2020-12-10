@@ -27,6 +27,11 @@ import bokeh
 import os
 
 
+# Specifying random number generator
+global rg
+
+rg = np.random.default_rng(3252)
+    
     
      
 def draw_bs_sample(data):
@@ -44,9 +49,7 @@ def draw_bs_sample(data):
         1D array containing the bootstrapped data.
     """
     
-    # Specifying random number generator
-    rg = np.random.default_rng(3252)
-    
+
     # Drawing a bootstrap replicate
     bs = rg.choice(data, size = len(data))
     
@@ -87,9 +90,48 @@ def draw_bs_reps_mle(mle_fun, data, args=(), size = 1, progress_bar = False):
     else:
         iterator = range(size)
         
-    rep_mles = np.array([mle_fun(draw_bs_sample(data), *args) for _ in iterator])
+    res_mles = np.array([mle_fun(draw_bs_sample(data), *args) for _ in iterator])
 
     return res_mles
+
+
+
+def log_likelihood_gamma(data, params):
+    """
+    Calculate the log likelihood for gamma distribution given the parameter values.
+    
+    Parameters
+    ----------
+    params : tuple of floats 
+        Format (alpha, beta)
+        Tuple containing the parameter values
+    
+    data : array 
+        numpy array containing the data values
+    
+    
+    Returns 
+    -------
+    log_likelihood : float
+        Value of the log likelihood for the gamma distribution given the parameter values.
+    
+    """
+    
+    # First extracting the individual parameter values
+    alpha, beta = params 
+    
+    # Setting constrains on the alpha and beta 
+    # They cannot be zero
+    if alpha <= 0 or beta <= 0:
+        
+        # return negative infinity if either is zero
+        return -np.inf
+    
+    # Otherwise calculating the log likelihood
+    log_likelihood = np.sum(scipy.stats.gamma.logpdf(data, alpha, loc = 0, scale = 1 / beta))
+    
+    return log_likelihood
+
 
 
 
@@ -257,9 +299,9 @@ def akaike_information_criterion(log_likelihood, num_params):
         ((log-likelihood) * (- 2)) + (2 * num_params)
     """
     
-    akaike_information_criterion = ((log_likelihood) * (- 2)) + (2 * num_params)
+    aic = ((log_likelihood) * (- 2)) + (2 * num_params)
     
-    return akaike_information_criterion
+    return aic
 
 
       
@@ -303,7 +345,7 @@ def bootstrap_aic(mle_function, data, size, progress_bar = True):
     
     
     # Creating a DataFrame to store all these values
-    df_mle = pd.DataFrame(bs_reps[0])
+    df_mle = pd.DataFrame(bs_reps)
     df_mle.columns = ["Param1_MLE", "Param2_MLE", "Log-Likelihood"]
     
     # Extracting the log likelihood values 
@@ -377,7 +419,7 @@ def compare_concentrations(mle_function, df_tidy, size, progress_bar = True):
         )
         
         # Creating a DataFrame to store all these values
-        df_rep = pd.DataFrame(bs_reps[0])
+        df_rep = pd.DataFrame(bs_reps)
         
         # If it is our Gamma Distribution
         if mle_function.__name__ == mle_iid_gamma.__name__:

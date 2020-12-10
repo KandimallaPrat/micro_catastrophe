@@ -23,9 +23,9 @@ import math
 
 import holoviews as hv
 import bokeh
-
+from bokeh.models.annotations import Title
+from bokeh.models import CategoricalColorMapper, Legend
 hv.extension('bokeh')
-bokeh.io.output_notebook()
 
 import os
 
@@ -460,21 +460,33 @@ def alpha_beta_plotter(df_conc, dot_alpha = 0.5, dot_size = 1.5):
     # Creating scatterplot
     alpha_beta = hv.Scatter(
         data = df_conc, 
-        kdims = ["Alpha_MLE"],
-        vdims = ["Beta_MLE", "Concentration (uM)"]
+        kdims = ["Alpha_MLE", "Beta_MLE"],
+        vdims = ["Concentration (uM)"],
     ).opts(
+        height = 750, 
+        width = 750,
+        legend_position = "right",
         color = "Concentration (uM)",
         title = "Alpha_MLE vs Beta_MLE",
         size = dot_size,
-        alpha = dot_alpha
+        alpha = dot_alpha,
+    ).groupby(
+        "Concentration (uM)"
+    ).overlay(
     )
 
+    alpha_beta.opts(legend_position = "right")
+        
     # Rendered
     alpha_beta_plot = hv.render(alpha_beta)
 
     # Aligning the title
+    t = Title()
+    t.text = "Alpha_MLE vs Beta_MLE"
+    alpha_beta_plot.title = t
     alpha_beta_plot.title.align = "center"
-
+    
+ 
     # Setting the legend labels
     alpha_beta_plot.legend.title = "Concentration (uM)"
     

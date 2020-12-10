@@ -87,7 +87,7 @@ def data_cleanup(data_path, save_name, filetype = "csv"):
     # The alternative would be an xlsx file
     elif filetype == "xlsx":
         # Read a excel file
-        df = pd.read_xlsx(data_path, skiprows = range(9))
+        df = pd.read_excel(data_path, skiprows = range(9))
     
     # If inappropriate filetype added 
     else:
@@ -139,7 +139,7 @@ def tidy_reader(data_path):
         Tidy DataFrame containing the data from the experiments
     """
     
-    df_tidy = pd.read_xlsx(data_path)
+    df_tidy = pd.read_excel(data_path)
     
     return df_tidy
     

@@ -1,2 +1,6 @@
 # micro_catastrophe
-Package to analyze microtubule catastophe times.
+Navigate to cat_analysis folder. 
+To install please use:
+`
+pip install -e .
+`
